@@ -2,7 +2,21 @@
 
 import streamlit as st
 import pandas as pd
+import numpy as np
+import torch
+import plotly.graph_objects as go
 from pathlib import Path
+import pickle
+
+# Import deep-eagle framework
+try:
+    from core import LSTMModel, TimeSeriesDataset
+    from core.data import FeatureEngine
+    MODELS_AVAILABLE = True
+except ImportError:
+    MODELS_AVAILABLE = False
+
+from utils.data_fetcher import StockDataFetcher
 
 
 def show():
@@ -10,11 +24,20 @@ def show():
     st.header("🔮 Stock Price Predictions")
     st.markdown("ML-powered stock price forecasts using LSTM neural networks")
 
-    # Info banner
+    # Check if models framework is available
+    if not MODELS_AVAILABLE:
+        st.warning("⚠️ Deep learning framework not available. Predictions are disabled.")
+        st.info(
+            "💡 **Note:** ML predictions require the deep-eagle framework. "
+            "To enable predictions, ensure the framework is properly installed."
+        )
+        return
+
+    # Show upload models option
     st.info(
-        "💡 **Note:** ML predictions are currently available only through the desktop app. "
-        "This feature requires PyTorch models and the deep-timeseries framework which are not "
-        "deployed to the cloud to keep the app lightweight and fast."
+        "💡 **Tip:** Models are trained locally on your desktop. "
+        "You can upload specific model files to enable cloud predictions, or use this "
+        "page to explore model information."
     )
 
     st.markdown("---")
