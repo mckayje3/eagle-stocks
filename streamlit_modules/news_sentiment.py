@@ -87,27 +87,38 @@ def show():
                 sentiments = []
 
                 for article in news[:20]:
+                    # Skip if article is None or empty
+                    if not article:
+                        continue
+
                     # Handle nested content structure
                     if 'content' in article:
                         article_data = article['content']
                     else:
                         article_data = article
 
-                    title = article_data.get('title', 'No title')
+                    # Skip if article_data is None
+                    if not article_data:
+                        continue
+
+                    title = article_data.get('title', 'No title') if isinstance(article_data, dict) else 'No title'
 
                     # Extract publisher
-                    provider = article_data.get('provider', {})
-                    publisher = provider.get('displayName', 'Unknown')
+                    provider = article_data.get('provider', {}) if isinstance(article_data, dict) else {}
+                    publisher = provider.get('displayName', 'Unknown') if isinstance(provider, dict) else 'Unknown'
 
                     # Extract link
-                    click_through = article_data.get('clickThroughUrl', {})
-                    link = click_through.get('url', '')
+                    click_through = article_data.get('clickThroughUrl', {}) if isinstance(article_data, dict) else {}
+                    link = click_through.get('url', '') if isinstance(click_through, dict) else ''
 
                     # Parse date
-                    pub_date = article_data.get('pubDate')
+                    pub_date = article_data.get('pubDate') if isinstance(article_data, dict) else None
                     if isinstance(pub_date, str):
-                        dt = datetime.fromisoformat(pub_date.replace('Z', '+00:00'))
-                        date = dt.strftime('%Y-%m-%d %H:%M')
+                        try:
+                            dt = datetime.fromisoformat(pub_date.replace('Z', '+00:00'))
+                            date = dt.strftime('%Y-%m-%d %H:%M')
+                        except:
+                            date = 'Unknown date'
                     else:
                         date = 'Unknown date'
 
