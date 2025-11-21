@@ -49,7 +49,7 @@ def calculate_prediction(symbol):
         features_path = Path(f'data/models/{symbol}_lstm_features.pkl')
 
         if not model_path.exists() or not features_path.exists():
-            return None
+            return None, f"Model files not found"
 
         # Load feature engine
         with open(features_path, 'rb') as f:
@@ -62,12 +62,12 @@ def calculate_prediction(symbol):
 
         data = data_fetcher.get_stock_data(symbol, start_date, end_date)
         if data is None or len(data) < 100:
-            return None
+            return None, f"Insufficient data"
 
-        # Prepare features
-        features = feature_engine.fit_transform(data)
+        # Prepare features using transform (not fit_transform for loaded engine)
+        features = feature_engine.transform(data)
         if features is None or len(features) < 100:
-            return None
+            return None, f"Feature engineering failed"
 
         # Create model
         device = get_device()
@@ -120,26 +120,29 @@ def calculate_prediction(symbol):
             'current_price': float(current_price),
             'predicted_price': float(prediction),
             'predicted_change_pct': float(predicted_change_pct)
-        }
+        }, None
 
     except Exception as e:
-        return None
+        return None, str(e)
 
 
-def calculate_all_predictions(symbols, progress_callback=None):
+def calculate_all_predictions(symbols, progress_callback=None, error_callback=None):
     """Calculate predictions for all symbols."""
     predictions = []
+    errors = []
     total = len(symbols)
 
     for i, symbol in enumerate(symbols):
         if progress_callback:
             progress_callback(i + 1, total, symbol)
 
-        result = calculate_prediction(symbol)
+        result, error = calculate_prediction(symbol)
         if result:
             predictions.append(result)
+        elif error and error_callback:
+            errors.append(f"{symbol}: {error}")
 
-    return predictions
+    return predictions, errors
 
 
 def load_cached_predictions():
@@ -219,13 +222,14 @@ def show():
 
         progress_bar = st.progress(0)
         status_text = st.empty()
+        error_container = st.container()
 
         def update_progress(current, total, symbol):
             progress = current / total
             progress_bar.progress(progress)
             status_text.text(f"Processing {current}/{total}: {symbol}")
 
-        predictions = calculate_all_predictions(available_symbols, update_progress)
+        predictions, errors = calculate_all_predictions(available_symbols, update_progress)
 
         if predictions:
             # Save to cache
@@ -236,8 +240,18 @@ def show():
             progress_bar.progress(1.0)
             status_text.text(f"✅ Complete! Calculated {len(predictions)} predictions")
             st.success(f"Successfully calculated predictions for {len(predictions)} stocks!")
+
+            # Show errors if any
+            if errors and len(errors) < 20:  # Only show if not too many
+                with error_container:
+                    with st.expander(f"⚠️ {len(errors)} stocks failed"):
+                        for error in errors[:10]:  # Show first 10
+                            st.text(error)
         else:
-            st.error("Failed to calculate predictions. Please try again.")
+            st.error("Failed to calculate any predictions. Please check the error details below:")
+            if errors:
+                for error in errors[:5]:  # Show first 5 errors
+                    st.error(error)
             return
 
     if not cached_predictions:

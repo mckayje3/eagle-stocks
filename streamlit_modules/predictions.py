@@ -64,8 +64,8 @@ def load_model_and_predict(symbol):
         if data is None or len(data) < 100:
             return None, f"Insufficient data for {symbol}"
 
-        # Prepare features
-        features = feature_engine.fit_transform(data)
+        # Prepare features using transform (not fit_transform for loaded engine)
+        features = feature_engine.transform(data)
         if features is None or len(features) < 100:
             return None, "Feature engineering failed"
 
