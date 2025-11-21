@@ -12,34 +12,13 @@ ENV/
 data/stock_cache.db
 data/top_movers_cache.pkl
 
-# Ignore all models by default
+# Ignore all pickle and model files by default
 *.pkl
 *.pt
 
-# But allow specific cloud models
-!data/models/AAPL_lstm_*
-!data/models/MSFT_lstm_*
-!data/models/GOOGL_lstm_*
-!data/models/AMZN_lstm_*
-!data/models/META_lstm_*
-!data/models/NVDA_lstm_*
-!data/models/TSLA_lstm_*
-!data/models/NFLX_lstm_*
-!data/models/AMD_lstm_*
-!data/models/INTC_lstm_*
-!data/models/SPY_lstm_*
-!data/models/QQQ_lstm_*
-!data/models/DIA_lstm_*
-!data/models/IWM_lstm_*
-!data/models/VOO_lstm_*
-!data/models/VTI_lstm_*
-!data/models/XLE_lstm_*
-!data/models/XLF_lstm_*
-!data/models/XLI_lstm_*
-!data/models/XLK_lstm_*
-!data/models/XLP_lstm_*
-!data/models/XLV_lstm_*
-!data/models/GENERIC_lstm_*
+# But allow ALL models in data/models directory for cloud deployment
+!data/models/*.pkl
+!data/models/*.pt
 
 # IDE
 .vscode/
