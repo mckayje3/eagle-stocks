@@ -9,7 +9,6 @@ yfinance>=0.2.28
 textblob>=0.17.1
 requests>=2.31.0
 
-# Deep Learning (optional - predictions will gracefully degrade without these)
-# Uncomment if deep-eagle repo becomes public with proper setup.py
-# git+https://github.com/mckayje3/deep-eagle.git
-# torch>=2.0.0
+# Deep Learning Framework
+git+https://github.com/mckayje3/deep-eagle.git
+torch>=2.0.0
