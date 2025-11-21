@@ -55,12 +55,10 @@ def calculate_prediction(symbol):
         with open(features_path, 'rb') as f:
             feature_engine = pickle.load(f)
 
-        # Get stock data
+        # Get stock data (2 years)
         data_fetcher = StockDataFetcher()
-        end_date = datetime.now()
-        start_date = end_date - timedelta(days=730)  # 2 years
+        data = data_fetcher.get_stock_data(symbol, period="2y", interval="1d")
 
-        data = data_fetcher.get_stock_data(symbol, start_date, end_date)
         if data is None or len(data) < 100:
             return None, f"Insufficient data"
 
