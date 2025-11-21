@@ -1,5 +1,5 @@
 """
-Stock Market Analyzer - Streamlit Web App
+Eagle Eye Stock Market Analyzer - Streamlit Web App
 
 A comprehensive stock analysis tool with ML predictions, sentiment analysis, and market insights.
 """
@@ -21,8 +21,8 @@ from utils.data_fetcher import StockDataFetcher
 
 # Page configuration
 st.set_page_config(
-    page_title="Stock Market Analyzer",
-    page_icon="📈",
+    page_title="Eagle Eye Stock Market Analyzer",
+    page_icon="🦅",
     layout="wide",
     initial_sidebar_state="expanded"
 )
@@ -70,7 +70,7 @@ if 'top_movers_cache' not in st.session_state:
             pass
 
 # Main title
-st.markdown('<h1 class="main-header">📈 Stock Market Analyzer</h1>', unsafe_allow_html=True)
+st.markdown('<h1 class="main-header">🦅 Eagle Eye Stock Market Analyzer</h1>', unsafe_allow_html=True)
 
 # Sidebar navigation
 st.sidebar.title("Navigation")
@@ -107,7 +107,7 @@ st.sidebar.markdown("---")
 st.sidebar.markdown(
     """
     <div style='text-align: center; color: gray; font-size: 0.8rem;'>
-    Stock Market Analyzer v2.0<br>
+    Eagle Eye Stock Market Analyzer v2.0<br>
     Built with Streamlit & PyTorch
     </div>
     """,
