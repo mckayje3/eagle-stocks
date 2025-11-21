@@ -6,7 +6,21 @@ import pickle
 from pathlib import Path
 from datetime import datetime
 
-import config
+# Import config with fallback
+try:
+    import config
+    CONFIG_AVAILABLE = True
+except ImportError:
+    CONFIG_AVAILABLE = False
+    # Fallback config values
+    class config:
+        PREDICTIONS = {
+            'training': {
+                'checkpoint': {
+                    'directory': 'data/models'
+                }
+            }
+        }
 
 
 def show():

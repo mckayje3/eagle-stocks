@@ -3,20 +3,27 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-import torch
-import plotly.graph_objects as go
 from pathlib import Path
 import pickle
 
-# Import deep-eagle framework
+# Import deep-eagle framework and dependencies with fallback
+MODELS_AVAILABLE = False
+IMPORT_ERROR_MSG = None
+
 try:
+    import torch
     from core import LSTMModel, TimeSeriesDataset
     from core.data import FeatureEngine
+    from utils.data_fetcher import StockDataFetcher
+    import plotly.graph_objects as go
     MODELS_AVAILABLE = True
-except ImportError:
-    MODELS_AVAILABLE = False
-
-from utils.data_fetcher import StockDataFetcher
+except ImportError as e:
+    IMPORT_ERROR_MSG = str(e)
+    # Fallback imports for basic functionality
+    try:
+        import plotly.graph_objects as go
+    except ImportError:
+        pass
 
 
 def show():
@@ -31,7 +38,22 @@ def show():
             "💡 **Note:** ML predictions require the deep-eagle framework. "
             "To enable predictions, ensure the framework is properly installed."
         )
-        return
+
+        # Show technical details in expander for debugging
+        if IMPORT_ERROR_MSG:
+            with st.expander("🔧 Technical Details"):
+                st.code(f"Import Error: {IMPORT_ERROR_MSG}", language="text")
+                st.markdown("""
+                **Common fixes:**
+                - Ensure `deep-eagle` repository is accessible
+                - Check that PyTorch is installed (`torch>=2.0.0`)
+                - Verify all dependencies in requirements.txt are installed
+                """)
+
+        st.markdown("---")
+
+        # Continue to show informational content below
+        # Don't return early - let users see what predictions look like
 
     # Show upload models option
     st.info(
