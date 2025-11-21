@@ -13,7 +13,7 @@ IMPORT_ERROR_MSG = None
 try:
     import torch
     from core import LSTMModel, TimeSeriesDataset
-    from core.data import FeatureEngine
+    from core.features import FeatureEngine
     from utils.data_fetcher import StockDataFetcher
     import plotly.graph_objects as go
     MODELS_AVAILABLE = True
